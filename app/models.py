@@ -1,11 +1,11 @@
-from sqlalchemy import String, Date, Numeric, ForeignKey, CheckConstraint
+from sqlalchemy import String, Date, Numeric, ForeignKey, CheckConstraint, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import BigInteger
 from .database import Base
 
 class Cliente(Base):
     __tablename__ = "clientes"
-    id_cliente: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id_cliente: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
     nombre: Mapped[str] = mapped_column(String(100), nullable=False)
     apellido: Mapped[str] = mapped_column(String(100), nullable=False)
     ci: Mapped[str] = mapped_column(String(20), unique=True, nullable=False)
@@ -16,7 +16,7 @@ class Cliente(Base):
 
 class Trabajador(Base):
     __tablename__ = "trabajadores"
-    id_trabajador: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id_trabajador: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
     nombre: Mapped[str] = mapped_column(String(100), nullable=False)
     apellido: Mapped[str] = mapped_column(String(100), nullable=False)
     ci: Mapped[str] = mapped_column(String(20), unique=True, nullable=False)
@@ -27,7 +27,7 @@ class Trabajador(Base):
 
 class Obra(Base):
     __tablename__ = "obras"
-    id_obra: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id_obra: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
     nombre_obra: Mapped[str] = mapped_column(String(120), nullable=False)
     ubicacion: Mapped[str] = mapped_column(String(150), nullable=False)
     fecha_inicio: Mapped[object | None] = mapped_column(Date)
