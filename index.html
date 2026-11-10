@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIMAL | Gestión Integral de Obras</title>
+
+<script src="https://cdn.plot.ly/plotly-3.1.0.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --navy: #10243A;
+    --navy2: #183A59;
+    --blue: #2875A8;
+    --gold: #C9A45C;
+    --green: #16865B;
+    --red: #D9534F;
+    --orange: #D99136;
+    --bg: #F3F6FA;
+    --white: #FFFFFF;
+    --text: #25364A;
+    --muted: #8290A2;
+    --border: #E5EAF0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+button, input, select {
+    font-family: inherit;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+    width: 255px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: var(--navy);
+    color: white;
+    padding: 25px 17px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    padding: 8px 12px 30px;
+    border-bottom: 1px solid #ffffff20;
+    margin-bottom: 25px;
+}
+
+.logo h2 {
+    font-size: 27px;
+    letter-spacing: 4px;
+    color: white;
+    font-weight: 800;
+}
+
+.logo span {
+    display: block;
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-top: 7px;
+}
+
+.menu-label {
+    color: #8DA2B9;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 0 12px;
+    margin-bottom: 12px;
+}
+
+.nav-btn {
+    border: none;
+    width: 100%;
+    background: transparent;
+    color: #C4D0DD;
+    padding: 13px 14px;
+    text-align: left;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-bottom: 6px;
+    transition: .2s;
+}
+
+.nav-btn:hover, .nav-btn.active {
+    background: #ffffff16;
+    color: white;
+}
+
+.nav-btn.active {
+    border-left: 3px solid var(--gold);
+}
+
+.nav-btn span {
+    margin-right: 12px;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    border-top: 1px solid #ffffff20;
+    padding: 18px 10px 5px;
+    font-size: 11px;
+    color: #AAB8C8;
+    line-height: 1.7;
+}
+
+/* MAIN */
+
+.main {
+    margin-left: 255px;
+    min-height: 100vh;
+}
+
+.topbar {
+    height: 75px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 35px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.topbar h3 {
+    color: var(--navy);
+    font-size: 17px;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    font-size: 12px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.content {
+    padding: 30px 35px;
+    max-width: 1700px;
+    margin: auto;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+.page-heading {
+    margin-bottom: 25px;
+}
+
+.page-heading h1 {
+    color: var(--navy);
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.page-heading p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 7px;
+}
+
+/* BUTTONS */
+
+.btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: .2s;
+}
+
+.btn-primary {
+    background: var(--navy);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--blue);
+}
+
+.btn-gold {
+    background: var(--gold);
+    color: white;
+}
+
+.btn-light {
+    background: #EDF2F7;
+    color: var(--navy);
+}
+
+/* KPI */
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 17px;
+    margin-bottom: 22px;
+}
+
+.kpi {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 21px;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi::after {
+    content: "";
+    position: absolute;
+    right: -15px;
+    top: -15px;
+    width: 75px;
+    height: 75px;
+    background: #2875A810;
+    border-radius: 50%;
+}
+
+.kpi-label {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.kpi-value {
+    color: var(--navy);
+    font-size: 27px;
+    font-weight: 800;
+    margin-top: 13px;
+}
+
+.kpi-description {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 7px;
+}
+
+/* PANELS */
+
+.panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 21px;
+    min-width: 0;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.panel-header h3 {
+    font-size: 14px;
+    color: var(--navy);
+}
+
+.panel-header small {
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.two-columns {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.equal-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.chart {
+    width: 100%;
+    height: 370px;
+}
+
+.chart-small {
+    width: 100%;
+    height: 310px;
+}
+
+/* TABLES */
+
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+    font-size: 11px;
+}
+
+thead {
+    background: #F5F7FA;
+}
+
+th {
+    color: #66778A;
+    font-weight: 700;
+    text-align: left;
+    padding: 14px 12px;
+    font-size: 10px;
+}
+
+td {
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--border);
+    color: #46566A;
+}
+
+tbody tr:hover {
+    background: #F8FAFC;
+}
+
+.badge {
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.badge-green {
+    background: #E4F5EC;
+    color: #16865B;
+}
+
+.badge-yellow {
+    background: #FFF3DA;
+    color: #B47A18;
+}
+
+.badge-red {
+    background: #FCE9E8;
+    color: #C74742;
+}
+
+.badge-blue {
+    background: #E7F1FA;
+    color: #2875A8;
+}
+
+.badge-gray {
+    background: #EEF1F4;
+    color: #69798A;
+}
+
+/* FILTERS */
+
+.filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.filters input, .filters select {
+    border: 1px solid var(--border);
+    background: white;
+    padding: 10px 12px;
+    border-radius: 7px;
+    font-size: 11px;
+    outline: none;
+}
+
+.filters input {
+    min-width: 230px;
+    flex: 1;
+}
+
+/* PROGRESS */
+
+.progress-container {
+    height: 8px;
+    background: #EDF0F4;
+    border-radius: 20px;
+    overflow: hidden;
+    min-width: 85px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 20px;
+}
+
+/* MODAL */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #10243A99;
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-box {
+    background: white;
+    width: 100%;
+    max-width: 450px;
+    padding: 27px;
+    border-radius: 12px;
+}
+
+.modal-box h3 {
+    color: var(--navy);
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    outline: none;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* AI */
+
+.ai-card {
+    background: linear-gradient(120deg, #10243A, #204C70);
+    color: white;
+    border-radius: 11px;
+    padding: 22px;
+    margin-bottom: 20px;
+}
+
+.ai-card h3 {
+    font-size: 15px;
+    margin-bottom: 9px;
+    color: var(--gold);
+}
+
+.ai-card p {
+    font-size: 12px;
+    line-height: 1.8;
+    color: #D7E2ED;
+}
+
+.empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 30px;
+    font-size: 12px;
+}
+
+#toast {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: var(--navy);
+    color: white;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-size: 12px;
+    display: none;
+    z-index: 300;
+    max-width: 350px;
+}
+
+@media(max-width:1100px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .two-columns, .equal-columns {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width:700px) {
+    .sidebar {
+        width: 65px;
+        padding: 15px 7px;
+    }
+
+    .logo {
+        padding: 10px 0 20px;
+        text-align: center;
+    }
+
+    .logo h2 {
+        font-size: 14px;
+    }
+
+    .logo span, .menu-label, .nav-text, .sidebar-footer {
+        display: none;
+    }
+
+    .nav-btn {
+        text-align: center;
+        padding: 15px 5px;
+        font-size: 17px;
+    }
+
+    .nav-btn span {
+        margin: 0;
+    }
+
+    .main {
+        margin-left: 65px;
+    }
+
+    .topbar {
+        padding: 0 15px;
+    }
+
+    .content {
+        padding: 20px 13px;
+    }
+
+    .kpi-grid {
+        gap: 9px;
+    }
+
+    .kpi {
+        padding: 14px;
+    }
+
+    .kpi-value {
+        font-size: 21px;
+    }
+
+    .page-heading h1 {
+        font-size: 20px;
+    }
+
+    .chart {
+        height: 320px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        <h2>KIMAL</h2>
+        <span>PROJECT CONTROL SYSTEM</span>
+    </div>
+
+    <div class="menu-label">MENÚ PRINCIPAL</div>
+
+    <button class="nav-btn active" onclick="mostrarPagina('dashboard',this)">
+        <span>▦</span><span class="nav-text"> Dashboard</span>
+    </button>
+
+    <button class="nav-btn" onclick="mostrarPagina('avance',this)">
+        <span>◫</span><span class="nav-text"> Avance de obra</span>
+    </button>
+
+    <button class="nav-btn" onclick="mostrarPagina('procedimientos',this)">
+        <span>▤</span><span class="nav-text"> Procedimientos</span>
+    </button>
+
+    <button class="nav-btn" onclick="mostrarPagina('ingenieria',this)">
+        <span>⌑</span><span class="nav-text"> Ingeniería</span>
+    </button>
+
+    <button class="nav-btn" onclick="mostrarPagina('inteligencia',this)">
+        <span>✧</span><span class="nav-text"> Inteligencia IA</span>
+    </button>
+
+    <div class="sidebar-footer">
+        SISTEMA KIMAL<br>
+        Gestión Integral de Obras<br>
+        <span style="color:#C9A45C">Versión 1.0</span>
+    </div>
+
+</aside>
+
+<!-- MAIN -->
+
+<main class="main">
+
+    <header class="topbar">
+        <h3 id="tituloPagina">Dashboard General</h3>
+
+        <div class="topbar-right">
+            <span id="conexion">
+                <span class="status-dot"></span> Conectando...
+            </span>
+            <span id="fechaActual"></span>
+            <button class="btn btn-light" onclick="cargarTodo()">↻ Actualizar</button>
+        </div>
+    </header>
+
+    <div class="content">
+
+        <!-- DASHBOARD -->
+
+        <section id="dashboard" class="page active">
+
+            <div class="page-heading">
+                <h1>Panel de Control Kimal</h1>
+                <p>Monitoreo general de ejecución, ingeniería y control documental.</p>
+            </div>
+
+            <div class="kpi-grid">
+
+                <div class="kpi">
+                    <div class="kpi-label">AVANCE FÍSICO GLOBAL</div>
+                    <div class="kpi-value" id="kpiAvance">0%</div>
+                    <div class="kpi-description">Ejecutados respecto al proyectado</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-label">TOTAL PROYECTADO</div>
+                    <div class="kpi-value" id="kpiProyectado">0</div>
+                    <div class="kpi-description">Cantidad total planificada</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-label">DOCUMENTOS APROBADOS</div>
+                    <div class="kpi-value" id="kpiAprobados">0</div>
+                    <div class="kpi-description">Procedimientos aprobados</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-label">DOCUMENTOS DE INGENIERÍA</div>
+                    <div class="kpi-value" id="kpiIngenieria">0</div>
+                    <div class="kpi-description">Registros de ingeniería</div>
+                </div>
+
+            </div>
+
+            <div class="ai-card">
+                <h3>✧ KIMAL INTELLIGENCE | ANÁLISIS DEL PROYECTO</h3>
+                <p id="resumenIA">
+                    Esperando información de Supabase para generar el análisis general.
+                </p>
+            </div>
+
+            <div class="two-columns">
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Visualización 3D del avance de obra</h3>
+                        <small>Proyectado vs ejecutado</small>
+                    </div>
+                    <div id="grafico3D" class="chart"></div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Estado de procedimientos</h3>
+                        <small>Distribución documental</small>
+                    </div>
+                    <div id="graficoDocumental3D" class="chart"></div>
+                </div>
+
+            </div>
+
+            <div class="equal-columns">
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Avance por frente de trabajo</h3>
+                    </div>
+                    <div id="graficoFrentes" class="chart-small"></div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Estado de ingeniería</h3>
+                    </div>
+                    <div id="graficoIngenieria" class="chart-small"></div>
+                </div>
+
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Resumen de frentes de trabajo</h3>
+                    <button class="btn btn-light" onclick="mostrarPagina('avance')">
+                        Ver detalle →
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>FRENTE</th>
+                                <th>PROYECTADO</th>
+                                <th>EJECUTADO</th>
+                                <th>PROGRESO</th>
+                                <th>PROTOCOLIZADO</th>
+                                <th>ESTADO</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaDashboard"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- AVANCE DE OBRA -->
+
+        <section id="avance" class="page">
+
+            <div class="page-heading">
+                <h1>Control de Avance de Obra</h1>
+                <p>Seguimiento de ejecución por frente de trabajo de la SE Kimal.</p>
+            </div>
+
+            <div class="kpi-grid">
+
+                <div class="kpi">
+                    <div class="kpi-label">TOTAL PROYECTADO</div>
+                    <div class="kpi-value" id="avanceProyectado">0</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-label">EJECUTADOS</div>
+                    <div class="kpi-value" id="avanceEjecutado">0</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-label">PENDIENTE</div>
+                    <div class="kpi-value" id="avancePendiente">0</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-label">AVANCE GLOBAL</div>
+                    <div class="kpi-value" id="avancePorcentaje">0%</div>
+                </div>
+
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Detalle de ejecución por frente</h3>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>FRENTE</th>
+                                <th>PROYECTADO</th>
+                                <th>EJECUTADOS (SP)</th>
+                                <th>EN ITO %</th>
+                                <th>CERRADO</th>
+                                <th>PROTOCOLIZADO</th>
+                                <th>PROTOCOLIZADO %</th>
+                                <th>AVANCE</th>
+                                <th>ACCIÓN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaAvance"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- PROCEDIMIENTOS -->
+
+        <section id="procedimientos" class="page">
+
+            <div class="page-heading">
+                <h1>Gestión de Procedimientos</h1>
+                <p>Control documental, revisión, aprobación y seguimiento Aconex.</p>
+            </div>
+
+            <div class="kpi-grid">
+
+                <div class="kpi">
+                    <div class="kpi-label">TOTAL PROCEDIMIENTOS</div>
+                    <div class="kpi-value" id="procTotal">0</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-label">APROBADOS</div>
+                    <div class="kpi-value" id="procAprobados">0</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-label">EN REVISIÓN</div>
+                    <div class="kpi-value" id="procRevision">0</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-label">ELIMINADOS</div>
+                    <div class="kpi-value" id="procEliminados">0</div>
+                </div>
+
+            </div>
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <h3>Registro de procedimientos</h3>
+                    <button class="btn btn-primary" onclick="cargarTodo()">↻ Actualizar datos</button>
+                </div>
+
+                <div class="filters">
+                    <input id="buscarProcedimiento" placeholder="Buscar por nombre o código..." oninput="renderProcedimientos()">
+
+                    <select id="filtroArea" onchange="renderProcedimientos()">
+                        <option value="">Todas las áreas</option>
+                        <option value="SSO">SSO</option>
+                        <option value="MA">MA</option>
+                    </select>
+
+                    <select id="filtroEstatus" onchange="renderProcedimientos()">
+                        <option value="">Todos los estados</option>
+                        <option value="APROBADO">Aprobado</option>
+                        <option value="ELIMINADO">Eliminado</option>
+                        <option value="REVISION">En revisión</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ITEM</th>
+                                <th>ÁREA</th>
+                                <th>ESP.</th>
+                                <th>NOMBRE DEL DOCUMENTO</th>
+                                <th>CÓDIGO ACONEX</th>
+                                <th>ESTATUS</th>
+                                <th>REV.</th>
+                                <th>FECHA ENVÍO</th>
+                                <th>FECHA APROBACIÓN</th>
+                                <th>OBSERVACIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaProcedimientos"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- INGENIERIA -->
+
+        <section id="ingenieria" class="page">
+
+            <div class="page-heading">
+                <h1>Gestión de Ingeniería</h1>
+                <p>Seguimiento de documentos técnicos, revisiones y aprobaciones.</p>
+            </div>
+
+            <div class="kpi-grid">
+
+                <div class="kpi">
+                    <div class="kpi-label">DOCUMENTOS REGISTRADOS</div>
+                    <div class="kpi-value" id="ingTotal">0</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-label">APROBADOS / CONOCIMIENTO</div>
+                    <div class="kpi-value" id="ingAprobados">0</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-label">REVISADOS CON COMENTARIOS</div>
+                    <div class="kpi-value" id="ingComentarios">0</div>
+                </div>
+
+                <div class="kpi">
+                    <div class="kpi-label">DEVUELTOS</div>
+                    <div class="kpi-value" id="ingDevueltos">0</div>
+                </div>
+
+            </div>
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <h3>Documentación de ingeniería</h3>
+                    <button class="btn btn-primary" onclick="cargarTodo()">↻ Actualizar</button>
+                </div>
+
+                <div class="filters">
+                    <input id="buscarIngenieria" placeholder="Buscar por código o documento..." oninput="renderIngenieria()">
+
+                    <select id="filtroIngEstatus" onchange="renderIngenieria()">
+                        <option value="">Todos los estados</option>
+                        <option value="APROBADO">Aprobados</option>
+                        <option value="COMENTARIOS">Con comentarios</option>
+                        <option value="DEVUELTO">Devueltos</option>
+                        <option value="CONOCIMIENTO">Toma de conocimiento</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>CÓDIGO</th>
+                                <th>NOMBRE</th>
+                                <th>REV.</th>
+                                <th>ESTATUS</th>
+                                <th>RECIBIDO EN</th>
+                                <th>FECHA ACTUALIZACIÓN</th>
+                                <th>FECHA APROBADO</th>
+                                <th>OBSERVACIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaIngenieria"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- IA -->
+
+        <section id="inteligencia" class="page">
+
+            <div class="page-heading">
+                <h1>Inteligencia Artificial</h1>
+                <p>Análisis automático de indicadores del proyecto Kimal.</p>
+            </div>
+
+            <div class="ai-card">
+                <h3>✧ KIMAL AI ANALYST</h3>
+                <p id="analisisGeneral">
+                    Cargando indicadores del proyecto...
+                </p>
+            </div>
+
+            <div class="equal-columns">
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Diagnóstico de avance</h3>
+                    </div>
+                    <div id="diagnosticoAvance" style="font-size:13px;line-height:2;color:#526477">
+                        Sin información disponible.
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Diagnóstico documental</h3>
+                    </div>
+                    <div id="diagnosticoDocumental" style="font-size:13px;line-height:2;color:#526477">
+                        Sin información disponible.
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+</main>
+
+<!-- MODAL ACTUALIZAR AVANCE -->
+
+<div class="modal" id="modalAvance">
+    <div class="modal-box">
+
+        <h3>Actualizar avance de obra</h3>
+
+        <p id="nombreFrenteModal" style="font-size:12px;color:#8290A2;margin-bottom:20px"></p>
+
+        <input type="hidden" id="idProtocolo">
+
+        <div class="form-group">
+            <label>Nuevo avance ejecutado (SP)</label>
+            <input type="number" id="nuevoAvance" min="0">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-light" onclick="cerrarModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardarAvance()">Guardar actualización</button>
+        </div>
+
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+/* ==========================================================
+   CONFIGURACIÓN DE LA API
+   ========================================================== */
+
+const API = {
+    procedimientos: "/api/protocolos",
+    ingenieria: "/api/ingenieria",
+    avance: "/api/avance-obra",
+    actualizarAvance: "/api/protocolos/actualizar"
+};
+
+/*
+ Si tu backend utiliza otra ruta para avance de obra,
+ modifica API.avance para que coincida con main.py.
+*/
+
+let procedimientos = [];
+let ingenieria = [];
+let avances = [];
+
+/* ==========================================================
+   FUNCIONES GENERALES
+   ========================================================== */
+
+const numero = valor => {
+    const n = Number(valor);
+    return Number.isFinite(n) ? n : 0;
+};
+
+const texto = valor => {
+    if (valor === null || valor === undefined || valor === "") {
+        return "—";
+    }
+    return String(valor);
+};
+
+const normalizar = valor =>
+    String(valor || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .toUpperCase();
+
+function fechaHoy() {
+    document.getElementById("fechaActual").textContent =
+        new Date().toLocaleDateString("es-BO");
+}
+
+function notificar(mensaje) {
+    const toast = document.getElementById("toast");
+    toast.textContent = mensaje;
+    toast.style.display = "block";
+
+    setTimeout(() => {
+        toast.style.display = "none";
+    }, 3500);
+}
+
+function mostrarPagina(id, boton) {
+
+    document.querySelectorAll(".page").forEach(p => {
+        p.classList.remove("active");
+    });
+
+    document.getElementById(id).classList.add("active");
+
+    document.querySelectorAll(".nav-btn").forEach(b => {
+        b.classList.remove("active");
+    });
+
+    if (boton) boton.classList.add("active");
+
+    const titulos = {
+        dashboard: "Dashboard General",
+        avance: "Control de Avance de Obra",
+        procedimientos: "Gestión de Procedimientos",
+        ingenieria: "Gestión de Ingeniería",
+        inteligencia: "Inteligencia Artificial"
+    };
+
+    document.getElementById("tituloPagina").textContent =
+        titulos[id] || "Sistema Kimal";
+
+    setTimeout(() => {
+        if (window.Plotly) {
+            window.dispatchEvent(new Event("resize"));
+        }
+    }, 100);
+}
+
+async function obtenerDatos(url) {
+
+    const respuesta = await fetch(url);
+
+    if (!respuesta.ok) {
+        throw new Error("Error HTTP " + respuesta.status + " en " + url);
+    }
+
+    const datos = await respuesta.json();
+
+    if (!Array.isArray(datos)) {
+        if (datos.error) throw new Error(datos.error);
+        throw new Error("La API no devolvió una lista en " + url);
+    }
+
+    return datos;
+}
+
+/* ==========================================================
+   CARGAR INFORMACIÓN DE SUPABASE
+   ========================================================== */
+
+async function cargarTodo() {
+
+    const conexion = document.getElementById("conexion");
+
+    conexion.innerHTML = "⟳ Actualizando...";
+
+    try {
+
+        const resultados = await Promise.all([
+            obtenerDatos(API.procedimientos),
+            obtenerDatos(API.ingenieria),
+            obtenerDatos(API.avance)
+        ]);
+
+        procedimientos = resultados[0];
+        ingenieria = resultados[1];
+        avances = resultados[2];
+
+        conexion.innerHTML =
+            '<span class="status-dot"></span> Supabase conectado';
+
+        renderTodo();
+
+        notificar("Información actualizada correctamente.");
+
+    } catch (error) {
+
+        console.error(error);
+
+        conexion.innerHTML =
+            '<span style="color:#D9534F">● Error de conexión</span>';
+
+        notificar("No se pudieron cargar los datos: " + error.message);
+    }
+}
+
+function renderTodo() {
+
+    renderDashboard();
+    renderAvance();
+    renderProcedimientos();
+    renderIngenieria();
+    renderInteligencia();
+
+}
+
+/* ==========================================================
+   UTILIDADES DE ESTADOS
+   ========================================================== */
+
+function claseEstado(estado) {
+
+    const e = normalizar(estado);
+
+    if (e.includes("APROBADO")) return "badge-green";
+
+    if (e.includes("ELIMINADO") || e.includes("RECHAZADO")) {
+        return "badge-red";
+    }
+
+    if (e.includes("DEVUELTO") || e.includes("COMENTARIO")) {
+        return "badge-yellow";
+    }
+
+    if (e.includes("CONOCIMIENTO")) return "badge-blue";
+
+    return "badge-gray";
+}
+
+function porcentaje(ejecutado, proyectado) {
+
+    if (proyectado <= 0) return 0;
+
+    return Math.min(100, (ejecutado / proyectado) * 100);
+}
+
+function suma(campo) {
+    return avances.reduce((total, item) => {
+        return total + numero(item[campo]);
+    }, 0);
+}
+
+/* ==========================================================
+   DASHBOARD GENERAL
+   ========================================================== */
+
+function renderDashboard() {
+
+    const proyectado = suma("proyectado");
+    const ejecutado = suma("ejecutados_sp");
+
+    const avanceGlobal = proyectado > 0
+        ? ejecutado / proyectado * 100
+        : 0;
+
+    const aprobados = procedimientos.filter(
+        p => normalizar(p.estatus).includes("APROBADO")
+    ).length;
+
+    document.getElementById("kpiAvance").textContent =
+        avanceGlobal.toFixed(1) + "%";
+
+    document.getElementById("kpiProyectado").textContent =
+        proyectado.toLocaleString("es-BO");
+
+    document.getElementById("kpiAprobados").textContent =
+        aprobados;
+
+    document.getElementById("kpiIngenieria").textContent =
+        ingenieria.length;
+
+    document.getElementById("tablaDashboard").innerHTML =
+        avances.map(a => {
+
+            const porcentajeAvance = porcentaje(
+                numero(a.ejecutados_sp),
+                numero(a.proyectado)
+            );
+
+            return `
+                <tr>
+                    <td><strong>${texto(a.actividad_se_kimal)}</strong></td>
+                    <td>${numero(a.proyectado).toLocaleString("es-BO")}</td>
+                    <td>${numero(a.ejecutados_sp).toLocaleString("es-BO")}</td>
+                    <td>
+                        ${porcentajeAvance.toFixed(1)}%
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width:${porcentajeAvance}%"></div>
+                        </div>
+                    </td>
+                    <td>${numero(a.protocolizado).toLocaleString("es-BO")}</td>
+                    <td><span class="badge ${porcentajeAvance >= 50 ? "badge-green" : "badge-yellow"}">
+                        ${porcentajeAvance >= 50 ? "En progreso" : "Seguimiento"}
+                    </span></td>
+                </tr>
+            `;
+        }).join("") || '<tr><td colspan="6" class="empty">Sin registros</td></tr>';
+
+    dibujarGrafico3D();
+    dibujarGraficoDocumental3D();
+    dibujarGraficoFrentes();
+    dibujarGraficoIngenieria();
+
+    const resumen = `El proyecto registra ${avanceGlobal.toFixed(1)}% de avance físico global, con ${ejecutado.toLocaleString("es-BO")} unidades ejecutadas de ${proyectado.toLocaleString("es-BO")} proyectadas. Se tienen ${aprobados} procedimientos aprobados y ${ingenieria.length} documentos de ingeniería registrados.`;
+
+    document.getElementById("resumenIA").textContent = resumen;
+}
+
+/* ==========================================================
+   GRÁFICO 3D INTERACTIVO
+   ========================================================== */
+
+function dibujarGrafico3D() {
+
+    const elemento = document.getElementById("grafico3D");
+
+    if (!avances.length) {
+        elemento.innerHTML = '<div class="empty">No hay información de avance disponible.</div>';
+        return;
+    }
+
+    const nombres = avances.map(a =>
+        String(a.actividad_se_kimal || "Sin nombre")
+    );
+
+    const proyectados = avances.map(a =>
+        numero(a.proyectado)
+    );
+
+    const ejecutados = avances.map(a =>
+        numero(a.ejecutados_sp)
+    );
+
+    const protocolizados = avances.map(a =>
+        numero(a.protocolizado)
+    );
+
+    const data = [
+        {
+            type: "scatter3d",
+            mode: "markers+lines",
+            name: "Proyectado",
+            x: nombres,
+            y: nombres.map(() => "Proyectado"),
+            z: proyectados,
+            marker: {
+                size: 9,
+                color: "#2875A8",
+                opacity: 0.95
+            },
+            line: {
+                color: "#2875A8",
+                width: 5
+            },
+            hovertemplate:
+                "<b>%{x}</b><br>Proyectado: %{z:,.0f}<extra></extra>"
+        },
+        {
+            type: "scatter3d",
+            mode: "markers+lines",
+            name: "Ejecutado",
+            x: nombres,
+            y: nombres.map(() => "Ejecutado"),
+            z: ejecutados,
+            marker: {
+                size: 9,
+                color: "#C9A45C"
+            },
+            line: {
+                color: "#C9A45C",
+                width: 5
+            },
+            hovertemplate:
+                "<b>%{x}</b><br>Ejecutado: %{z:,.0f}<extra></extra>"
+        },
+        {
+            type: "scatter3d",
+            mode: "markers",
+            name: "Protocolizado",
+            x: nombres,
+            y: nombres.map(() => "Protocolizado"),
+            z: protocolizados,
+            marker: {
+                size: 7,
+                color: "#16865B",
+                symbol: "diamond"
+            },
+            hovertemplate:
+                "<b>%{x}</b><br>Protocolizado: %{z:,.0f}<extra></extra>"
+        }
+    ];
+
+    const layout = {
+        paper_bgcolor: "#FFFFFF",
+        plot_bgcolor: "#FFFFFF",
+        margin: { l: 0, r: 0, t: 20, b: 0 },
+
+        scene: {
+            xaxis: {
+                title: "Frentes de trabajo",
+                tickfont: { size: 9 }
+            },
+            yaxis: {
+                title: "Indicador",
+                tickfont: { size: 9 }
+            },
+            zaxis: {
+                title: "Cantidad",
+                rangemode: "tozero"
+            },
+            camera: {
+                eye: { x: 1.6, y: 1.6, z: 1.2 }
+            },
+            bgcolor: "#FFFFFF"
+        },
+
+        legend: {
+            orientation: "h",
+            y: 1.05
+        }
+    };
+
+    Plotly.react(
+        elemento,
+        data,
+        layout,
+        {
+            responsive: true,
+            displaylogo: false
+        }
+    );
+}
+
+/* ==========================================================
+   GRÁFICO DOCUMENTAL
+   ========================================================== */
+
+function dibujarGraficoDocumental3D() {
+
+    const aprobados = procedimientos.filter(
+        p => normalizar(p.estatus).includes("APROBADO")
+    ).length;
+
+    const eliminados = procedimientos.filter(
+        p => normalizar(p.estatus).includes("ELIMINADO")
+    ).length;
+
+    const otros = procedimientos.length - aprobados - eliminados;
+
+    const data = [{
+        type: "pie",
+        labels: ["Aprobados", "En revisión / otros", "Eliminados"],
+        values: [aprobados, otros, eliminados],
+        hole: 0.4,
+        marker: {
+            colors: ["#16865B", "#C9A45C", "#8492A6"]
+        },
+        textinfo: "label+value",
+        hovertemplate:
+            "%{label}<br>Cantidad: %{value}<br>Participación: %{percent}<extra></extra>"
+    }];
+
+    const layout = {
+        paper_bgcolor: "#FFFFFF",
+        margin: { l: 15, r: 15, t: 20, b: 15 },
+        showlegend: true,
+        legend: {
+            orientation: "h",
+            y: -0.1
+        }
+    };
+
+    Plotly.react(
+        "graficoDocumental3D",
+        data,
+        layout,
+        {
+            responsive: true,
+            displaylogo: false
+        }
+    );
+}
+
+/* ==========================================================
+   GRÁFICO DE FRENTES
+   ========================================================== */
+
+function dibujarGraficoFrentes() {
+
+    const nombres = avances.map(a => a.actividad_se_kimal);
+
+    const data = [
+        {
+            type: "bar",
+            name: "Proyectado",
+            x: nombres,
+            y: avances.map(a => numero(a.proyectado)),
+            marker: { color: "#2875A8" }
+        },
+        {
+            type: "bar",
+            name: "Ejecutado",
+            x: nombres,
+            y: avances.map(a => numero(a.ejecutados_sp)),
+            marker: { color: "#C9A45C" }
+        }
+    ];
+
+    Plotly.react("graficoFrentes", data, {
+        barmode: "group",
+        paper_bgcolor: "#FFFFFF",
+        plot_bgcolor: "#FFFFFF",
+        margin: { l: 45, r: 10, t: 15, b: 100 },
+        xaxis: { tickangle: -30, automargin: true },
+        yaxis: { title: "Cantidad" },
+        legend: { orientation: "h", y: 1.12 }
+    }, { responsive: true, displaylogo: false });
+}
+
+/* ==========================================================
+   GRÁFICO DE INGENIERÍA
+   ========================================================== */
+
+function dibujarGraficoIngenieria() {
+
+    const grupos = {};
+
+    ingenieria.forEach(item => {
+
+        const estado = String(item.estatus || "Sin estado");
+
+        grupos[estado] = (grupos[estado] || 0) + 1;
+    });
+
+    const data = [{
+        type: "bar",
+        x: Object.keys(grupos),
+        y: Object.values(grupos),
+        marker: {
+            color: ["#16865B", "#C9A45C", "#2875A8", "#D9534F", "#8492A6"]
+        },
+        text: Object.values(grupos),
+        textposition: "auto"
+    }];
+
+    Plotly.react("graficoIngenieria", data, {
+        paper_bgcolor: "#FFFFFF",
+        plot_bgcolor: "#FFFFFF",
+        margin: { l: 35, r: 10, t: 15, b: 90 },
+        xaxis: { tickangle: -25, automargin: true },
+        yaxis: { title: "Documentos" }
+    }, { responsive: true, displaylogo: false });
+}
+
+/* ==========================================================
+   AVANCE DE OBRA
+   ========================================================== */
+
+function renderAvance() {
+
+    const proyectado = suma("proyectado");
+    const ejecutado = suma("ejecutados_sp");
+    const pendiente = Math.max(0, proyectado - ejecutado);
+
+    const porcentajeGlobal = proyectado > 0
+        ? ejecutado / proyectado * 100
+        : 0;
+
+    document.getElementById("avanceProyectado").textContent =
+        proyectado.toLocaleString("es-BO");
+
+    document.getElementById("avanceEjecutado").textContent =
+        ejecutado.toLocaleString("es-BO");
+
+    document.getElementById("avancePendiente").textContent =
+        pendiente.toLocaleString("es-BO");
+
+    document.getElementById("avancePorcentaje").textContent =
+        porcentajeGlobal.toFixed(1) + "%";
+
+    document.getElementById("tablaAvance").innerHTML =
+        avances.map(a => {
+
+            const avance = porcentaje(
+                numero(a.ejecutados_sp),
+                numero(a.proyectado)
+            );
+
+            return `
+                <tr>
+                    <td><strong>${texto(a.actividad_se_kimal)}</strong></td>
+                    <td>${numero(a.proyectado).toLocaleString("es-BO")}</td>
+                    <td>${numero(a.ejecutados_sp).toLocaleString("es-BO")}</td>
+                    <td>${numero(a.en_ito_porcentaje ?? a.en_ito)}%</td>
+                    <td>${numero(a.cerrado_protocolizado ?? a.cerrado).toLocaleString("es-BO")}</td>
+                    <td>${numero(a.protocolizado).toLocaleString("es-BO")}</td>
+                    <td>${numero(a.protocolizado_porcentaje ?? a.protocolizado_pct)}%</td>
+                    <td>
+                        ${avance.toFixed(1)}%
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width:${avance}%"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-gold"
+                            onclick="abrirModal('${String(a.id_protocolo ?? a.id ?? "").replace(/'/g, "\\'")}', '${String(a.actividad_se_kimal || "").replace(/'/g, "\\'")}', ${numero(a.ejecutados_sp)})">
+                            Editar
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join("") || '<tr><td colspan="9" class="empty">No existen registros de avance.</td></tr>';
+}
+
+/* ==========================================================
+   MODAL Y ACTUALIZACIÓN
+   ========================================================== */
+
+function abrirModal(id, nombre, actual) {
+
+    if (!id) {
+        notificar("No se encontró el identificador del registro.");
+        return;
+    }
+
+    document.getElementById("idProtocolo").value = id;
+
+    document.getElementById("nombreFrenteModal").textContent =
+        "Frente: " + nombre + " | Ejecutado actual: " + actual;
+
+    document.getElementById("nuevoAvance").value = actual;
+
+    document.getElementById("modalAvance").classList.add("show");
+}
+
+function cerrarModal() {
+    document.getElementById("modalAvance").classList.remove("show");
+}
+
+async function guardarAvance() {
+
+    const id = document.getElementById("idProtocolo").value;
+    const nuevo = Number(document.getElementById("nuevoAvance").value);
+
+    if (!id || !Number.isFinite(nuevo) || nuevo < 0) {
+        notificar("Introduce un avance válido.");
+        return;
+    }
+
+    try {
+
+        const respuesta = await fetch(API.actualizarAvance, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id_protocolo: Number(id),
+                nuevo_avance: nuevo
+            })
+        });
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(resultado.detail || "No se pudo actualizar.");
+        }
+
+        if (resultado.error) {
+            throw new Error(resultado.error);
+        }
+
+        cerrarModal();
+
+        notificar("Avance actualizado correctamente.");
+
+        await cargarTodo();
+
+    } catch (error) {
+
+        console.error(error);
+
+        notificar("Error al actualizar: " + error.message);
+    }
+}
+
+/* ==========================================================
+   PROCEDIMIENTOS
+   ========================================================== */
+
+function renderProcedimientos() {
+
+    const busqueda = normalizar(
+        document.getElementById("buscarProcedimiento").value
+    );
+
+    const area = document.getElementById("filtroArea").value;
+
+    const estado = document.getElementById("filtroEstatus").value;
+
+    const aprobados = procedimientos.filter(
+        p => normalizar(p.estatus).includes("APROBADO")
+    ).length;
+
+    const eliminados = procedimientos.filter(
+        p => normalizar(p.estatus).includes("ELIMINADO")
+    ).length;
+
+    document.getElementById("procTotal").textContent =
+        procedimientos.length;
+
+    document.getElementById("procAprobados").textContent =
+        aprobados;
+
+    document.getElementById("procEliminados").textContent =
+        eliminados;
+
+    document.getElementById("procRevision").textContent =
+        procedimientos.length - aprobados - eliminados;
+
+    const filtrados = procedimientos.filter(p => {
+
+        const textoBusqueda = normalizar(
+            (p.nombre_documento || p.nombre || "") + " " +
+            (p.codigo_aconex || p.codigo || "")
+        );
+
+        const coincideBusqueda = textoBusqueda.includes(busqueda);
+
+        const coincideArea = !area ||
+            normalizar(p.area) === normalizar(area);
+
+        const e = normalizar(p.estatus);
+
+        const coincideEstado = !estado ||
+            (estado === "APROBADO" && e.includes("APROBADO")) ||
+            (estado === "ELIMINADO" && e.includes("ELIMINADO")) ||
+            (estado === "REVISION" && !e.includes("APROBADO") && !e.includes("ELIMINADO"));
+
+        return coincideBusqueda && coincideArea && coincideEstado;
+    });
+
+    document.getElementById("tablaProcedimientos").innerHTML =
+        filtrados.map((p, index) => `
+            <tr>
+                <td>${texto(p.item ?? index + 1)}</td>
+                <td>${texto(p.area)}</td>
+                <td>${texto(p.esp)}</td>
+                <td>${texto(p.nombre_documento || p.nombre)}</td>
+                <td>${texto(p.codigo_aconex || p.codigo)}</td>
+                <td><span class="badge ${claseEstado(p.estatus)}">${texto(p.estatus)}</span></td>
+                <td>${texto(p.rev ?? p.revision)}</td>
+                <td>${texto(p.fecha_envio)}</td>
+                <td>${texto(p.fecha_aprobacion)}</td>
+                <td>${texto(p.observaciones)}</td>
+            </tr>
+        `).join("") || '<tr><td colspan="10" class="empty">No se encontraron procedimientos.</td></tr>';
+}
+
+/* ==========================================================
+   INGENIERÍA
+   ========================================================== */
+
+function renderIngenieria() {
+
+    const busqueda = normalizar(
+        document.getElementById("buscarIngenieria").value
+    );
+
+    const filtro = document.getElementById("filtroIngEstatus").value;
+
+    const cuenta = estado => ingenieria.filter(
+        i => normalizar(i.estatus).includes(estado)
+    ).length;
+
+    document.getElementById("ingTotal").textContent =
+        ingenieria.length;
+
+    document.getElementById("ingAprobados").textContent =
+        ingenieria.filter(i => {
+            const e = normalizar(i.estatus);
+            return e.includes("APROBADO") || e.includes("CONOCIMIENTO");
+        }).length;
+
+    document.getElementById("ingComentarios").textContent =
+        cuenta("COMENTARIO");
+
+    document.getElementById("ingDevueltos").textContent =
+        cuenta("DEVUELTO");
+
+    const filtrados = ingenieria.filter(i => {
+
+        const contenido = normalizar(
+            (i.codigo || i.codigo_documento || "") + " " +
+            (i.nombre || i.nombre_documento || "")
+        );
+
+        const e = normalizar(i.estatus);
+
+        const coincideBusqueda = contenido.includes(busqueda);
+
+        const coincideFiltro = !filtro ||
+            (filtro === "APROBADO" && e.includes("APROBADO")) ||
+            (filtro === "COMENTARIOS" && e.includes("COMENTARIO")) ||
+            (filtro === "DEVUELTO" && e.includes("DEVUELTO")) ||
+            (filtro === "CONOCIMIENTO" && e.includes("CONOCIMIENTO"));
+
+        return coincideBusqueda && coincideFiltro;
+    });
+
+    document.getElementById("tablaIngenieria").innerHTML =
+        filtrados.map(i => `
+            <tr>
+                <td>${texto(i.codigo || i.codigo_documento)}</td>
+                <td>${texto(i.nombre || i.nombre_documento)}</td>
+                <td>${texto(i.rev ?? i.revision)}</td>
+                <td><span class="badge ${claseEstado(i.estatus)}">${texto(i.estatus)}</span></td>
+                <td>${texto(i.recibido_en)}</td>
+                <td>${texto(i.fecha_actualizacion)}</td>
+                <td>${texto(i.fecha_aprobado)}</td>
+                <td>${texto(i.observaciones)}</td>
+            </tr>
+        `).join("") || '<tr><td colspan="8" class="empty">No se encontraron documentos de ingeniería.</td></tr>';
+}
+
+/* ==========================================================
+   INTELIGENCIA ARTIFICIAL - ANÁLISIS AUTOMÁTICO
+   ========================================================== */
+
+function renderInteligencia() {
+
+    const proyectado = suma("proyectado");
+    const ejecutado = suma("ejecutados_sp");
+
+    const avance = proyectado > 0
+        ? ejecutado / proyectado * 100
+        : 0;
+
+    const pendientes = Math.max(0, proyectado - ejecutado);
+
+    const devueltos = ingenieria.filter(
+        i => normalizar(i.estatus).includes("DEVUELTO")
+    ).length;
+
+    const comentarios = ingenieria.filter(
+        i => normalizar(i.estatus).includes("COMENTARIO")
+    ).length;
+
+    let diagnostico = "";
+
+    if (avance >= 75) {
+        diagnostico = "El proyecto presenta un nivel de ejecución física avanzado.";
+    } else if (avance >= 40) {
+        diagnostico = "El proyecto se encuentra en una etapa intermedia de ejecución. Se recomienda mantener el seguimiento periódico de los frentes.";
+    } else {
+        diagnostico = "El avance físico es todavía bajo respecto a lo proyectado. Es recomendable revisar la planificación y los recursos asignados.";
+    }
+
+    document.getElementById("diagnosticoAvance").innerHTML = `
+        <strong>Avance físico:</strong> ${avance.toFixed(1)}%<br>
+        <strong>Ejecutados:</strong> ${ejecutado.toLocaleString("es-BO")}<br>
+        <strong>Pendientes:</strong> ${pendientes.toLocaleString("es-BO")}<br><br>
+        ${diagnostico}
+    `;
+
+    document.getElementById("diagnosticoDocumental").innerHTML = `
+        <strong>Procedimientos:</strong> ${procedimientos.length}<br>
+        <strong>Ingeniería:</strong> ${ingenieria.length}<br>
+        <strong>Documentos devueltos:</strong> ${devueltos}<br>
+        <strong>Documentos con comentarios:</strong> ${comentarios}<br><br>
+        ${devueltos + comentarios > 0
+            ? "Se recomienda priorizar la resolución de observaciones y la reemisión de documentos."
+            : "No se identifican documentos devueltos o con comentarios en los registros cargados."}
+    `;
+
+    document.getElementById("analisisGeneral").textContent =
+        `El análisis de Kimal registra un avance de ${avance.toFixed(1)}%, con ${ejecutado.toLocaleString("es-BO")} unidades ejecutadas y ${pendientes.toLocaleString("es-BO")} pendientes. En ingeniería se identifican ${devueltos} documentos devueltos y ${comentarios} con comentarios. Estos indicadores permiten orientar el seguimiento de la ejecución y la gestión documental.`;
+}
+
+/* ==========================================================
+   INICIALIZACIÓN
+   ========================================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    fechaHoy();
+
+    cargarTodo();
+
+});
+
+</script>
+
+</body>
+</html>
