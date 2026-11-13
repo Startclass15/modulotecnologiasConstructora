@@ -1,0 +1,6 @@
+{
+  "name": "SE Kimal Digital Twin & ACONEX Suite",
+  "description": "Gemelo Digital 3D y Suite de Control Documental ACONEX para la Subestación Convertidora HVDC Kimal con integración Supabase PostgreSQL.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
